@@ -9,3 +9,5 @@ Dir["lib/runners/*.rb"].each {|f| require f}
 
 require "open-uri"
 require "json"
+require 'geocoder'
+require 'pry'

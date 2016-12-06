@@ -1,5 +1,5 @@
 class Toilet
-  attr_accessor :location, :name, :open_year_round, :rating
+  attr_accessor :location, :name, :open_year_round, :distance, :coordinates
 
   def initialize(location, name, open_year_round)
     @location = location
