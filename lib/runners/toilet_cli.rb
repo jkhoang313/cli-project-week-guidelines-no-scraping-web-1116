@@ -19,15 +19,17 @@ class ToiletCLI
       borough = get_borough_from_user
       search(borough)
       run
-    # elsif input == "Find"
-    #   borough = get_borough_from_user
-    #   matches = get_data(borough)
-    #
-    #   coordinates = get_address_coordinates
-    #   closest = find_closest_toilets(coordinates, matches)
-    #   present_data([closest])
+    elsif input == "Find"
+      borough = get_borough_from_user
+      matches = get_data(borough)
+
+      coordinates = get_address_coordinates
+      closest = find_closest_toilets(coordinates, matches)
+      present_data([closest])
+      run
     else
       puts "Invalid command."
+      run
     end
   end
 
@@ -62,39 +64,47 @@ class ToiletCLI
     ToiletDirectoryAdapter.new(input).make_instances
   end
 
-  # def get_address_coordinates
-  #   puts "What is your current address?"
-  #   address = gets.strip
-  #   Geocoder.search(address).first.geometry["location"]
-  # end
-  #
-  # def find_closest_toilets(coordinates, matches)
-  #   toilets = matches[3..13].each do |match|
-  #     location = match.location
-  #     if !Geocoder.search(location).empty?
-  #     #   Geocoder.search(location).first.geometry["location"]
-  #       match.coordinates = (Geocoder.search(location).first.geometry["location"])
-  #     end
-  #   end
-  #
-  #   compare_distance(coordinates, toilets.compact)
-  # end
-  #
-  # def compare_distance(current_coordinates, toilet_array)
-  #   array = toilet_array.collect do |toilet_coordinates|
-  #     lat = current_coordinates["lat"]
-  #     lng = current_coordinates["lng"]
-  #     toilet_lat = toilet_coordinates.coordinates["lat"]
-  #     toilet_lng = toilet_coordinates.coordinates["lng"]
-  #     lat_difference = lat - toilet_lat
-  #     lng_difference = lng - toilet_lng
-  #     sum = lat_difference.abs + lng_difference.abs
-  #   end
-  #
-  #   closest_index = array.index(array.min)
-  #
-  #   toilet_array[closest_index]
-  # end
+  def get_address_coordinates
+    puts "What is your current address?"
+    address = gets.strip
+    Geocoder.search(address).first.geometry["location"]
+  end
+
+  def find_closest_toilets(coordinates, matches)
+    non_nil = matches.select do |match|
+      match.location != nil
+    end
+
+    non_nil_2 = non_nil[0..19].select do |match|
+      !Geocoder.search(match.location).empty?
+    end
+
+    toilets = non_nil_2.each do |match|
+      location = match.location
+      if !Geocoder.search(location).empty?
+      #   Geocoder.search(location).first.geometry["location"]
+        match.coordinates = (Geocoder.search(location).first.geometry["location"])
+      end
+    end
+
+    compare_distance(coordinates, toilets.compact)
+  end
+
+  def compare_distance(current_coordinates, toilet_array)
+    array = toilet_array.collect do |toilet_coordinates|
+      lat = current_coordinates["lat"]
+      lng = current_coordinates["lng"]
+      toilet_lat = toilet_coordinates.coordinates["lat"]
+      toilet_lng = toilet_coordinates.coordinates["lng"]
+      lat_difference = lat - toilet_lat
+      lng_difference = lng - toilet_lng
+      sum = lat_difference.abs + lng_difference.abs
+    end
+
+    closest_index = array.index(array.min)
+
+    toilet_array[closest_index]
+  end
 
   def present_data(matches)
     matches.each do |toilet|
