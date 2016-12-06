@@ -1,3 +1,4 @@
 require_relative '../config/environment'
 
-ExampleCLI.new.call
+ToiletCLI.new.call
+# ToiletDirectoryAdapter.new("query").fetch_toilets
